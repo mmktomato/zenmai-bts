@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Zenmai - {% block title%}{% endblock %}</title>
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li><a href="/">Zenmai - bts</a></li>
+                <li><a href="/new/">new issue</a></li>
+            </ul>
+        </nav>
+        <div>
+        {% block content %}{% endblock %}
+        </div>
+    </body>
+</html>

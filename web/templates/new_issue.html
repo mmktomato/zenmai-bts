@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block title %}new issue{% endblock %}
+
+{% block content %}
+<form action="{{ request.path }}" method="post">
+    <input type="text" name="new_subject" />
+    <textarea name="new_body"></textarea>
+    <input type="submit" value="submit new issue"/>
+</form>
+{% endblock %}
+
+

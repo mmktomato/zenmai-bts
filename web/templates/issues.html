@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}issues{% endblock %}
+
+{% block content %}
+{% if issues %}
+    <ul>
+    {% for issue in issues %}
+        <li><a href="/{{ issue.id }}/">{{ issue }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    No items.
+{% endif %}
+{% endblock %}

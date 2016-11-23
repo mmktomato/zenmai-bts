@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}detail{% endblock %}
+
+{% block content %}
+{% if issue %}
+    <h1>{{ issue.subject }}</h1>
+    {{ issue.comments[0] }}
+    <p>{{ issue.comments[0].body }}</p>
+    <ul>
+    {% for comment in issue.comments[1:] %}
+        <li>{{ comment }}<p>{{ comment.body }}</p></li>
+    {% endfor %}
+    </ul>
+    <form action="{{ request.path }}" method="post">
+        <textarea name="new_body"></textarea>
+        <input type="submit" value="submit new comment"/>
+    </form>
+{% else %}
+    No issue.
+{% endif %}
+{% endblock %}
+
