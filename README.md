@@ -1,3 +1,5 @@
+**STILL UNDER DEVELOPMENT. NOT FOR PRODUCTION USE.**
+
 # Overview
 
 Zenmai is a Bug Tracking System (BTS). Inspired by [Kagemai](https://osdn.net/projects/kagemai/)
