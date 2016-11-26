@@ -3,16 +3,12 @@
 
 {% block content %}
 {% if issues %}
-    <div class="panel panel-default">
-        <div class="panel-heading">All</div>
-        <div class="panel-body">
-        <ul class="list-group">
-            {% for issue in issues %}
-            <li class="list-group-item"><a href="/{{ issue.id }}/">{{ issue }}</a></li>
-            {% endfor %}
-        </ul>
-        </div>
-    </div>
+<h2>All</h2>
+<ul class="list-group">
+    {% for issue in issues %}
+    <li class="list-group-item"><a href="/{{ issue.id }}/">{{ issue }}</a></li>
+    {% endfor %}
+</ul>
 {% else %}
     No items.
 {% endif %}
