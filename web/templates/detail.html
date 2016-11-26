@@ -16,9 +16,10 @@
         </div>
     </div>
     {% endfor %}
+    <h2>Add new comment</h2>
     <form action="{{ request.path }}" method="post">
-        <textarea name="new_body"></textarea>
-        <input type="submit" value="submit new comment"/>
+        {% include 'new_comment_form_group.html' %}
+        <button type="submit" class="btn btn-default">Submit</button>
     </form>
 {% else %}
     No issue.
