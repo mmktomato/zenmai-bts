@@ -16,4 +16,5 @@ def create_app():
     app.logger.debug('__name__ = {name}\nroot_path = {root_path}'.format(
         name=__name__, root_path=app.root_path))
     app.config.from_pyfile(join(app.root_path, 'zenmai.config.py'))
+    app.config['version'] = '0.0.1'
     return app
