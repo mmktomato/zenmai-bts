@@ -13,17 +13,21 @@ class Issue(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     subject = db.Column(db.String(256))
-    comments = db.relationship('Comment', backref='issue', lazy='dynamic')
+    state_id = db.Column(db.Integer, db.ForeignKey('state.id'))
 
-    def __init__(self, subject, comments):
+    comments = db.relationship('Comment', backref='issue', lazy='dynamic')
+    state = db.relationship('State', uselist=False, foreign_keys=[state_id])
+
+    def __init__(self, subject, comments, state_id):
         """Creates a instance of this class."""
 
         self.subject = subject
         self.comments = comments
+        self.state_id = state_id
 
     def __repr__(self):
-        return 'id={}, subject={}, comment length={}'.format(
-                self.id, self.subject, self.comments.count())
+        return 'id={}, subject={}, state_id={}, comment length={}'.format(
+                self.id, self.subject, self.state_id, self.comments.count())
 
     def all():
         """Returns all issues."""

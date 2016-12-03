@@ -11,6 +11,7 @@ app = create_app()
 with app.app_context():
     from web.models.issue import Issue
     from web.models.comment import Comment
+    from web.models.state import State
 
     # GET /
     @current_app.route('/')
@@ -36,6 +37,7 @@ with app.app_context():
         """
 
         issue = Issue.get(id)
+        states = State.all()
         if issue is None:
             abort(404)
         if request.method == 'POST':
@@ -45,8 +47,10 @@ with app.app_context():
             # TODO: try-catch
             new_body = request.form['new_body']
             new_comment = Comment(issue, new_body)
-            new_comment.add()
-        return render_template('detail.html', issue=issue)
+            #new_comment.add()
+            issue.state_id = request.form['new_state']
+            issue.add()
+        return render_template('detail.html', issue=issue, states=states)
 
     # GET /new
     # POST /new
@@ -57,16 +61,18 @@ with app.app_context():
         Renders a empty issue.
         Accepts a post request to add a new issue.
         """
+        issue = Issue(None, [], None)
+        states = State.all()
         if request.method == 'POST':
             # TODO: validate
             # TODO: message flash
             # TODO: csrf
             # TODO: try-catch
-            new_subject = request.form['new_subject']
-            new_body = request.form['new_body']
-            new_comment = Comment(None, new_body)
-            new_issue = Issue(new_subject, [new_comment])
-            new_issue.add()
-            return redirect(url_for('detail', id=new_issue.id))
-        return render_template('new_issue.html')
+            issue.subject = request.form['new_subject']
+            issue.state_id = request.form['new_state']
+            issue.body = request.form['new_body']
+            issue.comments = [Comment(issue, issue.body)]
+            issue.add()
+            return redirect(url_for('detail', id=issue.id))
+        return render_template('new_issue.html', issue=issue, states=states)
 

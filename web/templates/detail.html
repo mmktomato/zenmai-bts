@@ -5,6 +5,7 @@
 {% if issue %}
     <div class="page-header">
         <h1>{{ issue.subject }}</h1>
+        <span class="label label-info">{{ issue.state.name }}</span>
     </div>
     {% for comment in issue.comments %}
     <div class="panel panel-default">
