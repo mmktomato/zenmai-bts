@@ -48,4 +48,3 @@ class Issue(db.Model):
 
         db.session.add(self)
         db.session.commit()
-

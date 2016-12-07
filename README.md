@@ -10,6 +10,8 @@ Simple and Minimum.
 
 # Develop
 
+To start web application:
+
 ```sh
 # you need python3
 
@@ -26,3 +28,10 @@ python dbutil.py create
 
 # start web application in debug mode
 FLASK_APP=web/zenmai.py FLASK_DEBUG=1 flask run
+```
+
+To run unit test:
+
+```sh
+python runtest.py
+```

@@ -3,10 +3,14 @@
 To run in debug mode: $ FLASK_APP=web/zenmai.py FLASK_DEBUG=1 flask run
 """
 
-from flask import abort, current_app, redirect, render_template, request, url_for
+from flask import abort, current_app, has_app_context, redirect, render_template, request, url_for
 from . import create_app
 
-app = create_app()
+if not has_app_context():
+    app = create_app()
+else:
+    current_app.logger.debug('app_context exists.')
+    app = current_app
 
 with app.app_context():
     from web.models.issue import Issue
