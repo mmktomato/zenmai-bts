@@ -8,6 +8,7 @@ def init_db():
     import web.models.issue
     import web.models.comment
     from web.models.state import State
+    import web.models.attached_file
 
     db = get_db()
     db.create_all()

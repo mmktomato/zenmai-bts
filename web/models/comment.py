@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from . import get_db
+from .attached_file import AttachedFile
 
 db = get_db()
 
@@ -16,7 +17,9 @@ class Comment(db.Model):
     pub_date = db.Column(db.DateTime)
     body = db.Column(db.Text)
 
-    def __init__(self, issue, body, pub_date=None):
+    attached_files = db.relationship('AttachedFile', lazy='dynamic')
+
+    def __init__(self, issue, body, pub_date=None, attached_files=None):
         """Creates a instance of this class."""
 
         self.issue = issue
@@ -25,10 +28,12 @@ class Comment(db.Model):
             self.pub_date = datetime.utcnow()
         else:
             self.pub_date = pub_date
+        if attached_files is not None:
+            self.attached_files = attached_files
 
     def __repr__(self):
-        return 'id={}, issue_id={}, pub_date={}'.format(
-                self.id, self.issue_id, self.pub_date)
+        return 'id={}, issue_id={}, pub_date={}, attached_files length={}'.format(
+                self.id, self.issue_id, self.pub_date, self.attached_files.count())
 
     def add(self):
         """Inserts this instance to database."""
