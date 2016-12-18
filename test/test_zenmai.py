@@ -133,6 +133,18 @@ class ZenmaiTestCase(unittest.TestCase):
                 state_name='Open',
                 attached_file_name='test\.txt')
 
+    def test_post_large_attached_file(self):
+        """Test case of post request with too large attached file."""
+
+        large_buf = bytes(ctx['APP'].config['MAX_CONTENT_LENGTH'] + 1)
+        res = ctx['TEST_APP'].post('/new/', data={
+            'new_subject': 'test subject.test_post_new_issue.',
+            'new_body': 'test body.test_post_new_issue.',
+            'new_state': 1,
+            'file': (io.BytesIO(large_buf), 'test.txt')
+        }, follow_redirects=True)
+        self.assertEqual(res.status_code, 413)
+
     def test_get_download_attached_file(self):
         """Test case of downloading attached file. (HTTP GET)"""
 

@@ -31,6 +31,7 @@ def init(app):
     import web.zenmai
 
     ctx['TEST_APP'] = app.test_client()
+    ctx['APP'] = app
 
 def finalize(app):
     """Finalize unit test."""
