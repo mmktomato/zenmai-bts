@@ -88,7 +88,7 @@ class ZenmaiTestCase(unittest.TestCase):
             'new_body': 'test body.test_post_issue_detail',
             'new_state': 1,
             'file': (io.BytesIO(b'test attached file content.test_post_issue_detail.'), 'test.txt')
-        })
+        }, follow_redirects=True)
         data = res.data.decode('utf-8')
 
         self._assert_issue_detail(

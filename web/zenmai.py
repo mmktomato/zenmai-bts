@@ -53,6 +53,7 @@ with app.app_context():
             # TODO: try-catch
             new_comment = create_new_comment(request, issue)
             new_comment.add()
+            return redirect(url_for('detail', id=id))
         return render_template('detail.html', issue=issue, states=states)
 
     @current_app.route('/download/<int:attached_file_id>/', methods=['GET'])
