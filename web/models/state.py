@@ -23,7 +23,8 @@ class State(db.Model):
     def __repr(self):
         return '{}([])'.format(self.name, self.value)
 
-    def all():
+    @classmethod
+    def all(cls):
         """Returns all states. Ordered by 'value'."""
 
-        return State.query.order_by(State.value.asc()).all()
+        return cls.query.order_by(cls.value.asc()).all()

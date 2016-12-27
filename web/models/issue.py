@@ -29,19 +29,22 @@ class Issue(db.Model):
         return 'id={}, subject={}, state_id={}, comment length={}'.format(
                 self.id, self.subject, self.state_id, self.comments.count())
 
-    def all():
+    @classmethod
+    def all(cls):
         """Returns all issues."""
 
-        return Issue.query.all()
+        return cls.query.all()
 
-    def get(id):
+    @classmethod
+    def get(cls, id):
         """Returns an issue of specified id.
 
         Args:
+            cls (Issue): this class.
             id (int): issue id.
         """
 
-        return Issue.query.get(id)
+        return cls.query.get(id)
 
     def add(self):
         """Inserts this instance to database."""

@@ -26,11 +26,13 @@ class AttachedFile(db.Model):
         return 'id={}, comment_id={}, name = {}, data size={}'.format(
                 self.id, self.comment_id, self.name, len(self.data))
 
-    def get(id):
+    @classmethod
+    def get(cls, id):
         """Returns an attached file of specified id.
 
         Args:
+            cls (AttachedFile): this class.
             id (int): attached file id.
         """
 
-        return AttachedFile.query.get(id)
+        return cls.query.get(id)
