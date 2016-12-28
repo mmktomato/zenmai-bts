@@ -16,3 +16,5 @@
     <label for="new_attached_file">Attached file</label>
     <input type="file" id="new_attached_file" name="new_attached_file" />
 </div>
+<input name="{{ csrf_token_key }}" type="hidden" value="{{ create_csrf_token() }}">
+

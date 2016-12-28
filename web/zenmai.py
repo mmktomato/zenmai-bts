@@ -3,8 +3,10 @@
 To run in debug mode: $ FLASK_APP=web/zenmai.py FLASK_DEBUG=1 flask run
 """
 
-from flask import abort, current_app, has_app_context, redirect, render_template, request, send_file, url_for
-from . import create_app
+from flask import abort, current_app, has_app_context, \
+                  redirect, render_template, request, \
+                  session, send_file, url_for
+from . import create_app, create_csrf_token, validate_csrf_token, CSRF_TOKEN_KEY
 
 if not has_app_context():
     app = create_app()
@@ -19,6 +21,15 @@ with app.app_context():
     from web.models.state import State
     from web.models.attached_file import AttachedFile
     from web.form_helper import create_new_comment
+
+    app.jinja_env.globals['csrf_token_key'] = CSRF_TOKEN_KEY
+    app.jinja_env.globals['create_csrf_token'] = create_csrf_token
+
+    @app.before_request
+    def before_request():
+        if request.method == "POST":
+            if not validate_csrf_token(request):
+                abort(403)
 
     # GET /
     @current_app.route('/')
@@ -49,7 +60,6 @@ with app.app_context():
             abort(404)
         if request.method == 'POST':
             # TODO: message flash
-            # TODO: csrf
             # TODO: try-catch
             new_comment = create_new_comment(request, issue)
             new_comment.add()
@@ -87,7 +97,6 @@ with app.app_context():
         states = State.all()
         if request.method == 'POST':
             # TODO: message flash
-            # TODO: csrf
             # TODO: try-catch
             comment = create_new_comment(request, issue)
             issue.comments = [comment]
