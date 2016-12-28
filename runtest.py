@@ -30,8 +30,11 @@ def init(app):
     # define routing.
     import web.zenmai
 
+    ctx['CSRF_TOKEN'] = 'token'
     ctx['TEST_APP'] = app.test_client()
     ctx['APP'] = app
+
+    web.csrf_token_for_testing = 'token'
 
 def finalize(app):
     """Finalize unit test."""

@@ -85,6 +85,7 @@ class ZenmaiTestCase(unittest.TestCase):
         issue = create_issue()
         issue.add()
         res = ctx['TEST_APP'].post('/{}/'.format(issue.id), data={
+            'csrf_token': ctx['CSRF_TOKEN'],
             'new_body': 'test body.test_post_issue_detail',
             'new_state': 1,
             'file': (io.BytesIO(b'test attached file content.test_post_issue_detail.'), 'test.txt')
@@ -118,6 +119,7 @@ class ZenmaiTestCase(unittest.TestCase):
         """Test case of new issue page. (HTTP POST)"""
 
         res = ctx['TEST_APP'].post('/new/', data={
+            'csrf_token': ctx['CSRF_TOKEN'],
             'new_subject': 'test subject.test_post_new_issue.',
             'new_body': 'test body.test_post_new_issue.',
             'new_state': 1,

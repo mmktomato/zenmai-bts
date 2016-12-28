@@ -5,6 +5,7 @@ from os.path import join
 from flask import Flask, session
 
 CSRF_TOKEN_KEY = 'csrf_token'
+csrf_token_for_testing = ''
 
 def create_app():
     """Creates Flask application.
@@ -30,7 +31,10 @@ def create_csrf_token():
     """
 
     if CSRF_TOKEN_KEY not in session:
-        session[CSRF_TOKEN_KEY] = str(uuid.uuid4())
+        if csrf_token_for_testing:
+            session[CSRF_TOKEN_KEY] = csrf_token_for_testing
+        else:
+            session[CSRF_TOKEN_KEY] = str(uuid.uuid4())
     return session[CSRF_TOKEN_KEY]
 
 def validate_csrf_token(req):
