@@ -19,9 +19,35 @@
                             <li><a href="/">top</a></li>
                             <li><a href="/new/">new issue</a></li>
                         </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            {% if session['authenticated_user_id'] %}
+                                <li>{{ get_login_user() }}</li>
+                                <li><a href="/user/logout/">logout</a></li>
+                            {% else %}
+                                <li><a href="/user/login/">login</a></li>
+                                <li><a href="/user/new/">register</a></li>
+                            {% endif %}
+                        </ul>
                     </div>
                 </div>
             </nav>
+            <div>
+                {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% if messages %}
+                        <ul class="list-group">
+                        {% for category, message in messages %}
+                            {% if category == 'warning' %}
+                                <li class="list-group-item list-group-item-warning">{{ message }}</li>
+                            {% elif category == 'success' %}
+                                <li class="list-group-item list-group-item-success">{{ message }}</li>
+                            {% else %}
+                                <li class="list-group-item">{{ message }}</li>
+                            {% endif %}
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+            </div>
             <div>
                 {% block content %}{% endblock %}
             </div>

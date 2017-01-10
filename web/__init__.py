@@ -7,6 +7,8 @@ from flask import Flask, session
 CSRF_TOKEN_KEY = 'csrf_token'
 csrf_token_for_testing = ''
 
+AUTH_USER_ID_KEY = 'authenticated_user_id'
+
 def create_app():
     """Creates Flask application.
 
@@ -52,3 +54,4 @@ def validate_csrf_token(req):
     if req.form[CSRF_TOKEN_KEY] != session[CSRF_TOKEN_KEY]:
         return False
     return True
+

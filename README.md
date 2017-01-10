@@ -18,6 +18,7 @@ To start web application:
 # install Flask
 pip install Flask
 pip install Flask-SQLAlchemy
+pip install bcrypt
 
 # create your own config
 cp web/zenmai.config.sample.py web/zenmai.config.py
