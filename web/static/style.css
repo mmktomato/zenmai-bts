@@ -5,3 +5,12 @@ body {
 .zen-comment-body {
     word-wrap: break-word;
 }
+
+table.zen-issue-info {
+    width: 30%;
+}
+
+table.zen-issue-info > colgroup.zen-issue-info.zen-key {
+    width: 30%;
+}
+
