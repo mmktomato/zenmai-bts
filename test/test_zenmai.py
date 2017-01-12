@@ -8,6 +8,7 @@ from flask import request, session
 from . import ctx
 from .zenmai_test_utils import create_issue, create_comment, create_attached_file, create_user, \
                                 login, logout, delete_all_issues
+from web.models.issue import Issue
 from web.models.user import User
 
 class ZenmaiTestCase(unittest.TestCase):
@@ -26,7 +27,7 @@ class ZenmaiTestCase(unittest.TestCase):
             data (string): HTTP Response body.
             subject (string): Regex string of subject.
             body (string): Regex string of body.
-            pub_date (string): Regex string of pub_date.
+            pub_date (datetime): pub_date.
             state_name (string): Regex string of state name.
             attached_file_name (string): Regex string of attached file name.
         """
@@ -40,7 +41,7 @@ class ZenmaiTestCase(unittest.TestCase):
         self.assertRegex(data, body_regex)
 
         # pub_date
-        pub_date_regex = re.compile('<div class="panel-heading">.*{}.*</div>'.format(pub_date), re.DOTALL)
+        pub_date_regex = re.compile('<div class="panel-heading">.*{0:%Y-%m-%d %H:%M:%S}.*</div>'.format(pub_date), re.DOTALL)
         self.assertRegex(data, pub_date_regex)
 
         # state_name
@@ -84,7 +85,7 @@ class ZenmaiTestCase(unittest.TestCase):
                 data=data,
                 subject='test subject\.test_get_issue_detail\.',
                 body='test body\.test_get_issue_detail\.',
-                pub_date=str(pub_date),
+                pub_date=pub_date,
                 state_name=issue.state.name,
                 attached_file_name='test\.txt')
 
@@ -114,7 +115,7 @@ class ZenmaiTestCase(unittest.TestCase):
                     data=data,
                     subject=issue.subject,
                     body=issue.comments[0].body,
-                    pub_date=str(issue.comments[0].pub_date),
+                    pub_date=issue.comments[0].pub_date,
                     state_name=issue.state.name,
                     attached_file_name='test\.txt')
 
@@ -153,11 +154,15 @@ class ZenmaiTestCase(unittest.TestCase):
             }, follow_redirects=True)
             data = res.data.decode('utf-8')
 
+            issue = Issue.query \
+                .filter_by(subject='test subject.test_post_new_issue.') \
+                .first()
+
             self._assert_issue_detail(
                     data=data,
                     subject='test subject\.test_post_new_issue\.',
                     body='test body\.test_post_new_issue\.',
-                    pub_date='.*', # no assert. TODO: fix
+                    pub_date=issue.comments[0].pub_date,
                     state_name='Open',
                     attached_file_name='test\.txt')
 
