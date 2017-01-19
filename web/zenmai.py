@@ -17,6 +17,7 @@ else:
 
 with app.app_context():
     import io
+    from urllib.parse import urlparse, urljoin, quote
     from web.models.issue import Issue
     from web.models.comment import Comment
     from web.models.state import State
@@ -24,6 +25,11 @@ with app.app_context():
     from web.models.user import User
     from web.exceptions.zen_http_exception import ZenHttpException
     from web.form_helper import create_new_comment, create_new_user, do_login
+
+    def is_authenticated():
+        """Return true if user is authenticated."""
+
+        return AUTH_USER_ID_KEY in session
 
     def get_login_user():
         """Get authenticated user. Raise an exception
@@ -33,7 +39,7 @@ with app.app_context():
             An instance of User class.
         """
 
-        if AUTH_USER_ID_KEY not in session:
+        if not is_authenticated():
             raise ZenHttpException(403) # Forbidden
 
         ret = User.get(session[AUTH_USER_ID_KEY])
@@ -42,9 +48,38 @@ with app.app_context():
 
         return ret
 
+    def is_safe_url(target):
+        """Returns True if 'target' is safe url.
+        http://flask.pocoo.org/snippets/62/
+        """
+
+        ref_url = urlparse(request.host_url)
+        test_url = urlparse(urljoin(request.host_url, target))
+        return test_url.scheme in ('http', 'https') and \
+               ref_url.netloc == test_url.netloc
+
+    def get_redirect_destination(req):
+        """Returns redirect destination from query parameter.
+        If 'next' is not in query parameter or redirect url is
+        not safe, return None.
+
+        Args:
+            req (flask.request): flask.request object.
+        """
+
+        if 'next' not in request.args:
+            return None
+
+        next = request.args['next']
+        if not is_safe_url(next):
+            return None
+
+        return next
+
     app.jinja_env.globals['csrf_token_key'] = CSRF_TOKEN_KEY
     app.jinja_env.globals['create_csrf_token'] = create_csrf_token
     app.jinja_env.globals['get_login_user'] = get_login_user
+    app.jinja_env.globals['quote_url'] = lambda url: quote(url, safe='')
 
     def _handle_exception(err):
         t = type(err)
@@ -143,6 +178,10 @@ with app.app_context():
                 issue.comments = [comment]
                 issue.add()
                 return redirect(url_for('detail', id=issue.id))
+
+            if not is_authenticated():
+                flash('you need to login to add an issue.', 'info')
+                return redirect(url_for('login', next=request.url))
             return render_template('new_issue.html', issue=issue, states=states)
         except Exception as err:
             _handle_exception(err)
@@ -154,13 +193,17 @@ with app.app_context():
         """Rendering login page."""
 
         try:
+            dest = get_redirect_destination(request)
+            if not dest:
+                dest = '/'
+
             if request.method == 'POST':
                 if not do_login(request):
                     flash('id or password is incorrect.', 'warning')
-                    return redirect(url_for('login'))
+                    return redirect(url_for('login', next=dest))
                 else:
-                    return redirect(url_for('index'))
-            return render_template('login.html')
+                    return redirect(dest)
+            return render_template('login.html', next=dest)
         except Exception as err:
             _handle_exception(err)
 

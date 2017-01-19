@@ -130,9 +130,18 @@ class ZenmaiTestCase(unittest.TestCase):
     def test_get_new_issue(self):
         """Test case of new issue page. (HTTP GET)"""
 
-        res = ctx['TEST_APP'].get('/new/')
+        # without authentication.
+        res = ctx['TEST_APP'].get('/new/', follow_redirects=True)
         data = res.data.decode('utf-8')
-        self.assertIn('<h1>Add new issue</h1>', data)
+        self.assertIn('<title>Zenmai - login</title>', data)
+        self.assertIn('you need to login to add an issue.', data)
+
+        # with authentication.
+        with login() as (_, _):
+            res = ctx['TEST_APP'].get('/new/')
+            data = res.data.decode('utf-8')
+            self.assertIn('<title>Zenmai - new issue</title>', data)
+            self.assertIn('Add new issue', data)
 
     def test_post_new_issue(self):
         """Test case of new issue page. (HTTP POST)"""

@@ -2,7 +2,7 @@
 {% block title %}login{% endblock %}
 
 {% block content %}
-<form action="{{ request.path }}" method="post">
+<form action="{{ request.path }}?next={{ next or '' }}" method="post">
     <div class="form-group">
         <label for="user_id">User id</label>
         <input type="text" id="user_id" name="user_id" class="form-control" />

@@ -24,7 +24,7 @@
                                 <li>{{ get_login_user() }}</li>
                                 <li><a href="/user/logout/">logout</a></li>
                             {% else %}
-                                <li><a href="/user/login/">login</a></li>
+                                <li><a href="/user/login/?next={{ quote_url(request.url) }}">login</a></li>
                                 <li><a href="/user/new/">register</a></li>
                             {% endif %}
                         </ul>
@@ -36,7 +36,9 @@
                     {% if messages %}
                         <ul class="list-group">
                         {% for category, message in messages %}
-                            {% if category == 'warning' %}
+                            {% if category == 'info' %}
+                                <li class="list-group-item list-group-item-info">{{ message }}</li>
+                            {% elif category == 'warning' %}
                                 <li class="list-group-item list-group-item-warning">{{ message }}</li>
                             {% elif category == 'success' %}
                                 <li class="list-group-item list-group-item-success">{{ message }}</li>
