@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block title %}user{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>User information</h1>
+</div>
+{% with user = get_login_user() %}
+<table class="table">
+    <thead></thead>
+    <tbody>
+        <tr><td>id</td><td>{{ user.id }}</td></tr>
+        <tr><td>name</td><td>{{ user.name }}</td></tr>
+        <tr><td>passwowrd</td><td>************</td></tr>
+    </tbody>
+</table>
+<a href="/user/edit/" class="btn btn-default">edit</a>
+{% endwith %}
+{% endblock %}
+
+

@@ -21,7 +21,7 @@
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             {% if session['authenticated_user_id'] %}
-                                <li>{{ get_login_user() }}</li>
+                                <li><a href="/user/">{{ get_login_user() }}</a></li>
                                 <li><a href="/user/logout/">logout</a></li>
                             {% else %}
                                 <li><a href="/user/login/?next={{ quote_url(request.url) }}">login</a></li>

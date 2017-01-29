@@ -7,6 +7,23 @@ from web.models.comment import Comment
 from web.models.attached_file import AttachedFile
 from web.models.user import User
 
+def _get_user_information(req):
+    """Get user information from form.
+
+    Args:
+        req (flask.request): flask.request object.
+
+    Returns:
+        dictionary.
+    """
+
+    # TODO: validate
+
+    return {'user_id': req.form['user_id'],
+            'user_name': req.form['user_name'],
+            'password': req.form['password'],
+            'password_retype': req.form['password_retype']}
+
 def create_new_comment(req, issue, user):
     """Creates a comment instance from flask.request object.
 
@@ -74,17 +91,39 @@ def create_new_user(req):
         form data is invalid.
     """
 
-    # TODO: validate
+    user_info = _get_user_information(req)
 
-    user_id = req.form['user_id']
-    user_name = req.form['user_name']
-    password = req.form['password']
-    password_retype = req.form['password_retype']
-
-    if password != password_retype:
+    if user_info['password'] != user_info['password_retype']:
         return (None, 'password is not matched.')
 
-    if User.get(user_id) is not None:
-        return (None, "id '{}' is already exists.".format(user_id))
+    if User.get(user_info['user_id']) is not None:
+        return (None, "id '{}' is already exists.".format(user_info['user_id']))
 
-    return (User(user_id, user_name, password), None)
+    return (User(user_info['user_id'], user_info['user_name'], user_info['password']), None)
+
+def edit_user_information(req, user):
+    """edit user information.
+
+    Args:
+        req (flask.request): flask.request object.
+        user (User): authenticated user.
+
+    Returns:
+        A tuple (User, message). 'User' is None if
+        form data is invalid.
+    """
+
+    user_info = _get_user_information(req)
+
+    if user_info['password'] != user_info['password_retype']:
+        return (None, 'password is not matched.')
+
+    # name
+    user.name = user_info['user_name']
+
+    # password
+    if user_info['password']:
+        user.change_password(user_info['password'])
+
+    return (user, None)
+

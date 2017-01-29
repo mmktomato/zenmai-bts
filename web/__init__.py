@@ -9,6 +9,8 @@ csrf_token_for_testing = ''
 
 AUTH_USER_ID_KEY = 'authenticated_user_id'
 
+NOT_AUTHENTICATED_MESSAGE = 'you need to login.'
+
 def create_app():
     """Creates Flask application.
 

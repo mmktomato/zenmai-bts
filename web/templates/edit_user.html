@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block title %}{% if user %}edit user{% else %}register{% endif %}{% endblock %}
+
+{% block content %}
+<form action="{{ request.path }}" method="post">
+    <div class="form-group">
+        <label for="user_id">User id</label>
+        <input type="text" id="user_id" name="user_id" class="form-control"
+            {% if user %}value="{{ user.id }}" readonly{% endif %} />
+    </div>
+    <div class="form-group">
+        <label for="user_name">User name</label>
+        <input type="text" id="user_name" name="user_name" class="form-control"
+            {% if user %}value="{{ user.name }}"{% endif %} />
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" class="form-control"
+            {% if user %}aria-describedby="help-block"{% endif %} />
+        {% if user %}
+            <span id="help-block" class="help-block">leave empty if you don't want to change password.</span>
+        {% endif %}
+    </div>
+    <div class="form-group">
+        <label for="password_retype">Re-type password</label>
+        <input type="password" id="password_retype" name="password_retype" class="form-control"
+            {% if user %}aria-describedby="help-block"{% endif %} />
+        {% if user %}
+            <span id="help-block" class="help-block">leave empty if you don't want to change password.</span>
+        {% endif %}
+    </div>
+    <input name="{{ csrf_token_key }}" type="hidden" value="{{ create_csrf_token() }}">
+    <button type="submit" class="btn btn-default">
+        {% if user %}
+            Save
+        {% else %}
+            Register
+        {% endif %}
+    </button>
+</form>
+{% endblock %}
+
+

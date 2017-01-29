@@ -42,6 +42,13 @@ class User(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def save(self):
+        """Save session."""
+
+        # TODO: not good. fix this.
+
+        db.session.commit()
+
     def _encode_password(self, password):
         """Encode password string.
 
@@ -83,3 +90,9 @@ class User(db.Model):
 
         bpassword = self._encode_password(password)
         return bcrypt.checkpw(bpassword, self.hashed_password)
+
+    def change_password(self, password):
+        """Change user password."""
+
+        self.hashed_password = self._create_hashed_password(password)
+

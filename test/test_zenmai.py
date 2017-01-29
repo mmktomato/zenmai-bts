@@ -134,7 +134,7 @@ class ZenmaiTestCase(unittest.TestCase):
         res = ctx['TEST_APP'].get('/new/', follow_redirects=True)
         data = res.data.decode('utf-8')
         self.assertIn('<title>Zenmai - login</title>', data)
-        self.assertIn('you need to login to add an issue.', data)
+        self.assertIn('you need to login.', data)
 
         # with authentication.
         with login() as (_, _):
@@ -218,7 +218,7 @@ class ZenmaiTestCase(unittest.TestCase):
             data = res.data.decode('utf-8')
 
             self.assertEqual(res.status_code, 200)
-            self.assertIn('<li>{}(id:{})</li>'.format(user.name, user.id), data)
+            self.assertIn('<li><a href="/user/">{}(id:{})</a></li>'.format(user.name, user.id), data)
 
     def test_get_logout_page(self):
         """Test case of logout. (HTTP GET)"""
@@ -271,6 +271,7 @@ class ZenmaiTestCase(unittest.TestCase):
         }, follow_redirects=True)
         data = res.data.decode('utf-8')
         self.assertIn('<title>Zenmai - register</title>', data)
+        self.assertIn('password is not matched.', data)
         self.assertEqual(res.status_code, 200)
 
         # already exist.
@@ -290,5 +291,68 @@ class ZenmaiTestCase(unittest.TestCase):
         }, follow_redirects=True)
         data = res.data.decode('utf-8')
         self.assertIn('<title>Zenmai - register</title>', data)
+        self.assertIn("id &#39;{}&#39; is already exists.".format('testid.test_post_register_invalid_user'), data)
         self.assertEqual(res.status_code, 200)
+
+    def test_get_user_page(self):
+        """Test case of user page. (HTTP GET)"""
+
+        # without authentication.
+        res = ctx['TEST_APP'].get('/user/', follow_redirects=True)
+        data = res.data.decode('utf-8')
+        self.assertIn('<title>Zenmai - login</title>', data)
+        self.assertEqual(res.status_code, 200)
+
+        # with authentication.
+        with login() as (user, _):
+            res = ctx['TEST_APP'].get('/user/')
+            data = res.data.decode('utf-8')
+            self.assertIn('<td>{}</td>'.format(user.id), data)
+            self.assertIn('<td>{}</td>'.format(user.name), data)
+            self.assertEqual(res.status_code, 200)
+
+    def test_get_user_edit_page(self):
+        """Test case of user edit page. (HTTP GET)"""
+
+        # without authentication.
+        res = ctx['TEST_APP'].get('/user/edit/')
+        data = res.data.decode('utf-8')
+        self._assert_403(res.data.decode('utf-8'))
+
+        # with authentication.
+        with login() as (user, _):
+            res = ctx['TEST_APP'].get('/user/edit/')
+            data = res.data.decode('utf-8')
+            self.assertIn('<title>Zenmai - edit user</title>', data)
+            self.assertIn('value="{}" readonly'.format(user.id), data)
+            self.assertIn('value="{}"'.format(user.name), data)
+            self.assertIn("leave empty if you don't want to change password.", data)
+            self.assertEqual(res.status_code, 200)
+
+    def test_post_user_edit_page(self):
+        """Test case of edit user. (HTTP POST)"""
+
+        # without authentication.
+        res = ctx['TEST_APP'].post('/user/edit/', data={
+            'csrf_token': ctx['CSRF_TOKEN'],
+            'user_id': 'testid.test_post_user_edit_page',
+            'user_name': 'testname.test_post_user_edit_page',
+            'password': 'testpassword.test_post_user_edit_page',
+            'password_retype': 'testpassword.test_post_user_edit_page'
+        }, follow_redirects=True)
+        self._assert_403(res.data.decode('utf-8'))
+
+        # with authentication.
+        with login() as (user, _):
+            res = ctx['TEST_APP'].post('/user/edit/', data={
+                'csrf_token': ctx['CSRF_TOKEN'],
+                'user_id': user.id,
+                'user_name': 'new testname.test_post_user_edit_page',
+                'password': 'new testpassword.test_post_user_edit_page',
+                'password_retype': 'new testpassword.test_post_user_edit_page'
+            }, follow_redirects=True)
+            data = res.data.decode('utf-8')
+            self.assertIn('<td>{}</td>'.format(user.id), data)
+            self.assertIn('<td>{}</td>'.format('new testname.test_post_user_edit_page'), data)
+            self.assertEqual(res.status_code, 200)
 

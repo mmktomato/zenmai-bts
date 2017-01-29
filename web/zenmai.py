@@ -7,7 +7,7 @@ from flask import abort, current_app, flash, has_app_context, \
                   redirect, render_template, request, \
                   session, send_file, url_for
 from . import create_app, create_csrf_token, validate_csrf_token, \
-              CSRF_TOKEN_KEY, AUTH_USER_ID_KEY
+              CSRF_TOKEN_KEY, AUTH_USER_ID_KEY, NOT_AUTHENTICATED_MESSAGE
 
 if not has_app_context():
     app = create_app()
@@ -24,7 +24,8 @@ with app.app_context():
     from web.models.attached_file import AttachedFile
     from web.models.user import User
     from web.exceptions.zen_http_exception import ZenHttpException
-    from web.form_helper import create_new_comment, create_new_user, do_login
+    from web.form_helper import create_new_comment, create_new_user, do_login, \
+                                edit_user_information
 
     def is_authenticated():
         """Return true if user is authenticated."""
@@ -180,11 +181,24 @@ with app.app_context():
                 return redirect(url_for('detail', id=issue.id))
 
             if not is_authenticated():
-                flash('you need to login to add an issue.', 'info')
+                flash(NOT_AUTHENTICATED_MESSAGE, 'info')
                 return redirect(url_for('login', next=request.url))
             return render_template('new_issue.html', issue=issue, states=states)
         except Exception as err:
             _handle_exception(err)
+
+    # GET /user
+    @app.route('/user/', methods=['GET'])
+    def user():
+        """Rendering user page."""
+
+        try:
+            if not is_authenticated():
+                return redirect(url_for('login', next=request.url))
+            return render_template('user.html')
+        except Exception as err:
+            _handle_exception(err)
+
 
     # GET /user/login
     # POST /user/login
@@ -234,7 +248,32 @@ with app.app_context():
                     new_user.add()
                     flash("user '{}' is registered.".format(new_user), 'success')
                     return redirect(url_for('login'))
-            return render_template('new_user.html')
+            return render_template('edit_user.html')
+        except Exception as err:
+            _handle_exception(err)
+
+    # GET /user/edit
+    # POST /user/edit
+    @app.route('/user/edit/', methods=['GET', 'POST'])
+    def edit_user():
+        """Rendering edit user page."""
+
+        try:
+            user = get_login_user()
+            if request.method == 'POST':
+                (user, message) = edit_user_information(request, user)
+                if user is None:
+                    flash(message, 'warning')
+                    return redirect(url_for('edit_user'))
+
+                user.save()
+                return redirect(url_for('user'))
+
+            if not is_authenticated():
+                flash(NOT_AUTHENTICATED_MESSAGE, 'info')
+                return redirect(url_for('login', next=request.url))
+
+            return render_template('edit_user.html', user=user)
         except Exception as err:
             _handle_exception(err)
 
