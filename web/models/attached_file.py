@@ -11,9 +11,9 @@ class AttachedFile(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
-    comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
-    name = db.Column(db.String(256))
-    data = db.Column(db.LargeBinary)
+    comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=False)
+    name = db.Column(db.String(256), nullable=False)
+    data = db.Column(db.LargeBinary, nullable=False)
 
     def __init__(self, comment_id, name, data):
         """Creates a instance of this class."""

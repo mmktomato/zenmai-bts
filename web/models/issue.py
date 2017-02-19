@@ -12,8 +12,8 @@ class Issue(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
-    subject = db.Column(db.String(256))
-    state_id = db.Column(db.Integer, db.ForeignKey('state.id'))
+    subject = db.Column(db.String(256), nullable=False)
+    state_id = db.Column(db.Integer, db.ForeignKey('state.id'), nullable=False)
 
     comments = db.relationship('Comment', backref='issue', lazy='dynamic')
     state = db.relationship('State', uselist=False, foreign_keys=[state_id])

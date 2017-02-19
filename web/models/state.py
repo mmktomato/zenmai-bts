@@ -11,8 +11,8 @@ class State(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32))
-    value = db.Column(db.Integer, unique=True)
+    name = db.Column(db.String(32), nullable=False)
+    value = db.Column(db.Integer, unique=True, nullable=False)
 
     def __init__(self, name, value):
         """Creates a instance of this class."""

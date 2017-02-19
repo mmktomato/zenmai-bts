@@ -12,8 +12,8 @@ class User(db.Model):
     """
 
     id = db.Column(db.String(32), primary_key=True)
-    name = db.Column(db.String(32))
-    hashed_password = db.Column(db.LargeBinary(64))
+    name = db.Column(db.String(32), nullable=False)
+    hashed_password = db.Column(db.LargeBinary(64), nullable=False)
 
     def __init__(self, id, name, password):
         """Creates a instance of this class."""

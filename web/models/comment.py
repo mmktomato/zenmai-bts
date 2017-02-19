@@ -14,10 +14,10 @@ class Comment(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
-    issue_id = db.Column(db.Integer, db.ForeignKey('issue.id'))
-    user_id = db.Column(db.String(32), db.ForeignKey('user.id'))
-    pub_date = db.Column(db.DateTime)
-    body = db.Column(db.Text)
+    issue_id = db.Column(db.Integer, db.ForeignKey('issue.id'), nullable=False)
+    user_id = db.Column(db.String(32), db.ForeignKey('user.id'), nullable=False)
+    pub_date = db.Column(db.DateTime, nullable=False)
+    body = db.Column(db.Text, nullable=False)
 
     attached_files = db.relationship('AttachedFile', lazy='dynamic')
     user = db.relationship('User', uselist=False, foreign_keys=[user_id])
